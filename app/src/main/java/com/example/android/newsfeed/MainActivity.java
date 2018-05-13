@@ -17,13 +17,20 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<NewsArticle>> {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<List<NewsArticle>> {
+
+    /**
+     * Constant value for the loader ID. We can choose any integer.
+     * This really only comes into play if you're using multiple loaders.
+     */
+    private static final int LOADER_ID = 1;
 
     /**
      * URL for news articles data from the The Guardian dataset
      */
     private static final String THE_GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2014-01-01&show-tags=contributor&api-key=test";
+            "https://content.guardianapis.com/search?q=android&from-date=2014-01-01&show-tags=contributor&api-key=99a7dd3c-f883-4419-9801-98a9eef0b976";
 
     //Adapter for the list of news articles
     private NewsArticleAdapter mAdapter;
@@ -65,8 +72,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 // Create a new intent to view the earthquake URI
                 Intent websiteIntent = new Intent(Intent.ACTION_VIEW, newsArticleUri);
 
-                // Send the intent to launch a new activity
-                startActivity(websiteIntent);
+                // Verify the intent will resolve to at least one activity
+                if (websiteIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(websiteIntent);
+                }
             }
         });
 
@@ -83,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(1, null, this);
+            loaderManager.initLoader(LOADER_ID, null, this);
         } else {
             // Otherwise, display error
             // First, hide loading indicator so error message will be visible
