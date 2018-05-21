@@ -4,11 +4,15 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,10 +31,10 @@ public class MainActivity extends AppCompatActivity
     private static final int LOADER_ID = 1;
 
     /**
-     * URL for news articles data from the The Guardian dataset
+     * URL for news articles data from the The Guardian data set
      */
     private static final String THE_GUARDIAN_REQUEST_URL =
-            "https://content.guardianapis.com/search?q=android&from-date=2014-01-01&show-tags=contributor&api-key=99a7dd3c-f883-4419-9801-98a9eef0b976";
+            "https://content.guardianapis.com/search?";
 
     //Adapter for the list of news articles
     private NewsArticleAdapter mAdapter;
@@ -113,8 +117,38 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public Loader<List<NewsArticle>> onCreateLoader(int id, Bundle args) {
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences.
+        // The second parameter is the default value for this preference.
+        String searchByKeyword = sharedPrefs.getString(
+                getString(R.string.edit_text_preferences), null);
+
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default));
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(THE_GUARDIAN_REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value
+        if (searchByKeyword.length() > 0) {
+            uriBuilder.appendQueryParameter("q", searchByKeyword);
+        }
+
+        // Set the number of article displayed to 50 (maximum accepted value by the API)
+        uriBuilder.appendQueryParameter("page-size", "50");
+
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("api-key", "99a7dd3c-f883-4419-9801-98a9eef0b976");
+
         // Create a new loader for the given URL
-        return new NewsArticleLoader(this, THE_GUARDIAN_REQUEST_URL);
+        return new NewsArticleLoader(this, uriBuilder.toString());
     }
 
 
@@ -148,5 +182,25 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader<List<NewsArticle>> loader) {
         // Loader reset, so we can clear out our existing data.
         mAdapter.clear();
+    }
+
+    // This method initialize the contents of the Activity's options menu.
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the Options Menu we specified in XML
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    // This method is called whenever an item in the options menu is selected.
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

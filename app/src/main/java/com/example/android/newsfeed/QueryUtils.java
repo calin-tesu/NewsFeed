@@ -33,7 +33,7 @@ final class QueryUtils {
     private QueryUtils() {
     }
 
-    //Query The Guardian dataset and return a list of {@link NewsArticle} objects
+    //Query The Guardian data set and return a list of {@link NewsArticle} objects
     public static List<NewsArticle> fetchNewsArticleData(String requestUrl) {
 
         //Create URL object

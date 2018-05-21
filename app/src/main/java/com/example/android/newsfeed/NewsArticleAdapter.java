@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
 
@@ -62,7 +66,19 @@ class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
         TextView publicationDateView = listItemView.findViewById(R.id.publication_date);
 
         String[] parts = currentArticle.getPublicationDate().split(TIME_SEPARATOR);
-        publicationDateView.setText(parts[0]);
+
+        //Format the date in more appealing style
+        //Example taken from
+        // https://stackoverflow.com/questions/17324060/converting-yyyy-mm-dd-into-dd-mm-yyyy?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy");
+        try {
+            Date date = inputFormat.parse(parts[0]);
+            String outputDateString = outputFormat.format(date);
+            publicationDateView.setText(outputDateString);
+        } catch (ParseException e) {
+            publicationDateView.setText(parts[0]);
+        }
 
         return listItemView;
     }
