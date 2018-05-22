@@ -40,30 +40,29 @@ class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         // Check if the existing view is being reused, otherwise inflate the view
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.news_list, parent, false);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.news_list, parent, false);
         }
 
         //Get the data item for this position
         NewsArticle currentArticle = getItem(position);
 
         //Find the TextView with the ID section_name
-        TextView sectionView = listItemView.findViewById(R.id.section_name);
+        TextView sectionView = convertView.findViewById(R.id.section_name);
         sectionView.setText(currentArticle.getSectionName());
 
         //Find the TextView with the ID title, and set the title of the news article
-        TextView titleView = listItemView.findViewById(R.id.title);
+        TextView titleView = convertView.findViewById(R.id.title);
         titleView.setText(currentArticle.getWebTitle());
 
-        TextView authorView = listItemView.findViewById(R.id.author);
+        TextView authorView = convertView.findViewById(R.id.author);
         //Format the TextView for author name by adding the "by " before the his/her name
         if (currentArticle.getAuthor() != null) {
             author = getContext().getString(R.string.by_author) + currentArticle.getAuthor();
         }
         authorView.setText(author);
 
-        TextView publicationDateView = listItemView.findViewById(R.id.publication_date);
+        TextView publicationDateView = convertView.findViewById(R.id.publication_date);
 
         String[] parts = currentArticle.getPublicationDate().split(TIME_SEPARATOR);
 
@@ -80,6 +79,6 @@ class NewsArticleAdapter extends ArrayAdapter<NewsArticle> {
             publicationDateView.setText(parts[0]);
         }
 
-        return listItemView;
+        return convertView;
     }
 }

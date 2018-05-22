@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         // Append query parameter and its value
-        if (searchByKeyword.length() > 0) {
+        if (searchByKeyword != null) {
             uriBuilder.appendQueryParameter("q", searchByKeyword);
         }
 
