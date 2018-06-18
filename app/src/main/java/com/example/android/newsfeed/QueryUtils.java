@@ -167,8 +167,7 @@ final class QueryUtils {
                     author = authorJSON.getString("webTitle");
                 }
 
-                // Create a new {@link } object with the magnitude, location, time,
-                // and url from the JSON response.
+                // Create a new {@link } object from the JSON response.
                 NewsArticle article = new NewsArticle(webTitle, webUrl, sectionName, author, publicationDate);
                 newsArticles.add(article);
             }
